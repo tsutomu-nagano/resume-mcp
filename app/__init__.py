@@ -1,0 +1,2 @@
+"""resume-mcp package."""
+

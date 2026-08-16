@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    container_name: resume-mcp
+    env_file:
+      - path: .env
+        required: false
+    # environment:
+    #   GRAPHQL_URL: ${GRAPHQL_URL:-http://localhost:4000/graphql}
+    ports:
+      - "${MCP_PORT:-8000}:8000"
+    restart: unless-stopped
