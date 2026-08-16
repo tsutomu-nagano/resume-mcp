@@ -50,7 +50,66 @@ docker compose up --build
 http://localhost:8000/mcp
 ```
 
-ポートを変更したい場合は `.env` の `MCP_PORT` を変更してください。
+ポートを変更したい場合は `.env.app` の `MCP_PORT` を変更してください。
+
+## OpenAI Tunnel Client
+
+GPT など、ローカルPC外から MCP Server に接続する場合は、OpenAI の `tunnel-client` を使います。ChatGPT 側では Connection mode に `Tunnel` を選び、同じ `tunnel_id` を指定します。
+
+### WSL/Linux amd64 で使う場合
+
+WSL/Linux amd64 の場合は、Linux amd64 版の `tunnel-client` バイナリを `~/.local/bin/tunnel-client` に配置してください。
+
+```bash
+chmod +x ~/.local/bin/tunnel-client
+```
+
+`tunnel-client run --profile resume` で起動している場合は、通常 `~/.config/tunnel-client/resume.yaml` が使われます。Compose では `~/.config/tunnel-client` をコンテナへ読み取り専用でマウントします。
+
+`.env.tunnel` に tunnel-client 用の値を設定します。
+
+```text
+CONTROL_PLANE_API_KEY=sk-...
+CONTROL_PLANE_TUNNEL_ID=tunnel_0123456789abcdef0123456789abcdef
+MCP_SERVER_URL=http://app:8000/mcp
+HEALTH_LISTEN_ADDR=0.0.0.0:8080
+HOME=/home/tunnel-client
+TUNNEL_CLIENT_PROFILE=resume
+TUNNEL_CLIENT_HEALTH_PORT=8080
+```
+
+MCP Server と tunnel-client を起動します。
+
+```bash
+docker compose up --build
+```
+
+Compose 内では `tunnel-client run --profile resume` が実行され、MCP Server には以下のURLで接続します。
+
+```text
+http://app:8000/mcp
+```
+
+ChatGPT 側には MCP Server URL ではなく、Tunnel connection として `CONTROL_PLANE_TUNNEL_ID` と同じ `tunnel_id` を指定します。
+
+### tunnel-client.exe を使う場合
+
+Windows 側の `tunnel-client.exe` を使う場合は、Docker Compose の Linux コンテナ内ではなく Windows 側で起動してください。
+
+先に MCP Server を起動します。
+
+```bash
+docker compose up --build
+```
+
+別ターミナルで Windows 側の `tunnel-client.exe` を起動します。
+
+```powershell
+$env:CONTROL_PLANE_API_KEY="sk-..."
+$env:CONTROL_PLANE_TUNNEL_ID="tunnel_0123456789abcdef0123456789abcdef"
+$env:MCP_SERVER_URL="http://127.0.0.1:8000/mcp"
+.\tunnel-client.exe run
+```
 
 ## MCP Tool
 

@@ -4,4 +4,6 @@
 __pycache__
 .pytest_cache
 PROJECT_STATUS.md
-
+bin/tunnel-client
+bin/.local/tunnel-client
+tunnel-client/

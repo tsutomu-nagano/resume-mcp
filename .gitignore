@@ -1,7 +1,10 @@
-.env
+.env.app
+.env.tunnel
 .venv/
 __pycache__/
 .pytest_cache/
 *.py[cod]
 PROJECT_STATUS.md
-
+bin/tunnel-client
+bin/.local/tunnel-client
+tunnel-client/
